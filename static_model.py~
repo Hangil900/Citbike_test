@@ -1,0 +1,94 @@
+import config
+import numpy as np
+
+
+def get_static_optimal
+
+
+"""
+Returns actual optimal period when looking at day's data.
+"""
+def get__optimal_periods(rates, dates, tripDF,rideProb, COST_PARAM):
+    # Returns the optimal incentive periods for the static model.
+    start, end = dates[0], dates[-1]
+    f = config.static_incentive_periods.format(COST_PARAM)
+    if os.path.isfile(f):
+        Iperiods = pickle.load(open(f, 'rb'))
+        return Iperiods
+
+    Iperiods = {}
+    for d in dates:
+        today = dt.datetime.strptime(d, '%Y_%m_%d')
+        tmrw = dt.timedelta(days = 1) + today
+
+        dayTripDF = tripDF[(tripDF.startDatetime>=today) &
+                           (tripDF.endDatetime <= tmrw)]
+        Speriods = {}
+        for s in rates[d]:
+            opt_int = __get_optimal_period(dayTripDF, s, rideProb[d] ,COST_PARAM)
+            Speriods[s] = opt_int
+        Iperiods[d] = Speriods
+
+    pickle.dump(Iperiods, open(f, 'wb'))
+    return Iperiods
+
+"""
+Given the day's trip DF, and station s, returns optimal static IP.
+"""
+def __get_optimal_period(dayTripDF, s, rideProb, COST_PARAM):
+    start = config.start_min
+    end = config.end_min
+    startData = dayTripDF[(dayTripDF.minuteIndex>=start) &
+                          (dayTripDF.minuteIndex < end) &
+                          (dayTripDF['startID'] == s) &
+                          (dayTripDF['start status'] < 0)]
+
+    endData = dayTripDF[(dayTripDF.minuteIndex>=start) &
+                        (dayTripDF.minuteIndex < end) &
+                        (dayTripDF['endID'] == s) &
+                        (dayTripDF['end status'] > 0)]
+
+    num_int = (end - start) / config.interval
+
+    scores = [0]* num_int
+
+    for _, data in startData.iterrows():
+        if ADD_BOTH_STATIONS:
+	    impact = ((data.startDeltaCC + data.endDeltaCC) *
+                       (rideProb[s][data.startTimeIndex]['out']))
+        else:
+            impact = ((data.startDeltaCC) *
+                       (rideProb[s][data.startTimeIndex]['out']))
+	impact *= -1
+        impact -= COST_PARAM
+        scores[data.startTimeIndex - 12] += impact
+        
+    for _, data in endData.iterrows():
+        if ADD_BOTH_STATIONS:
+	    impact = (( data.startDeltaCC + data.endDeltaCC ) *
+                       (rideProb[s][data.endTimeIndex]['in']))
+        else:
+            impact = ((data.endDeltaCC) *
+                       (rideProb[s][data.endTimeIndex]['in']))
+        impact *= -1
+        impact -= COST_PARAM
+        scores[data.endTimeIndex - 12] += impact
+
+
+    opt_int = (0,0)
+    opt_val = 0
+    curr = 0
+    curr_start = 0
+
+    for i in range(num_int):
+        curr += scores[i]
+        if curr > opt_val:
+            opt_int = (curr_start, i+1)
+            opt_val = curr
+        if curr < 0:
+            curr = 0
+            curr_start = i+1
+
+    return (opt_int[0] * config.interval + start ,
+            opt_int[1] * config.interval + start)
+    

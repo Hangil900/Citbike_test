@@ -1,0 +1,19 @@
+import os
+import config
+
+def get_result_difference():
+    f2 = open('results_analysis.txt', 'wb')
+    with open(config.results_file, 'rb') as f:
+        lines = f.readlines()
+        for line in lines:
+            lineA = line.split()
+            if len(lineA) == 6:
+                try:
+                    cost = float(lineA[0])
+                    dyn = float(lineA[3])
+                    dyn_cc = float(lineA[-1])
+                    s = "{0}, {1}, {2}, {3}".format(cost, dyn,
+                                                    dyn_cc, dyn - dyn_cc)
+
+                    
+                        

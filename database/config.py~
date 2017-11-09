@@ -1,0 +1,30 @@
+
+bikshare_db_config = {
+  'user':'tracker_ro_user', 
+  'password':'6W.v6/,HZR9mBGx',
+  'host': 'tracker-ro.csqwfkioldwf.us-east-1.rds.amazonaws.com',
+  'database':'bikeshare_nyc'
+}
+
+warehouse_db_config = {
+  'user':'dm_nyc_mtv_bi', 
+  'password':'t8IAGm5mREcdYiAnEb0b',
+  'host': 'datamart.nyc.8d.com',
+  'database':'nyc_datawarehouse_bss4'
+}
+
+# warehouse_db_config = {
+#   'user':'datamart_mtvhq', 
+#   'password':'31xHeaBuOvYF9JsPrBxO',
+#   'host': 'datamart.nyc.8d.com',
+#   'database':'nyc_datawarehouse_bss4'
+# }
+
+
+riders_file = "~/Desktop/Citibike_new/data_files/members_201610.csv"
+riders_pickle = riders_file[:-3] + "p"
+
+stations_file = "~/Desktop/Citibike_new/data_files/stations_201610.csv"
+stations_pickle = stations_pickle[:-3] + "p"
+
+tripDF_pickle = "~/Desktop/Citibike_new/data_files/tripsDF_full.p"

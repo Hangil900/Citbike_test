@@ -1,0 +1,26 @@
+import pickle
+import config
+
+def get_stations():
+    # Gets the incentivized stations
+    if os.path.isfile(config.stations_pickle):
+        Istations = pickle.load(open(config.stations_pickle, "rb"))
+    else:
+        tripsDF = pickle.load(open(config.tripDF_pickle, 'rb'))
+
+        AM = set()
+        amTripDF = tripsDF[tripsDF['startTimeIndex'] < 24]
+        
+        for i, status in enumerate(amTripDF['start status']):
+            if status  < 0:
+                AM.add(amTripDF['startID'].tolist()[i])
+
+        for i, status in enumerate(tripsDF['end status']):
+            if status > 0:
+                AM.add(tripsDF['endID'].tolist()[i])
+        pickle.dump(list(AM), open(config.AM_stations_p, 'wb'))
+        pickle.dump(list(PM), open(config.PM_stations_p, 'wb'))
+
+        Istations = list(set(list(AM) + list(PM)))
+        pickle.dump(Istations, open(config.stations_pickle, 'wb'))
+    return Istations
